@@ -1,0 +1,18 @@
+#!/usr/bin/env perl
+package Examples::RequiredIfExample;
+
+use Try::Tiny;
+
+use Option::Parser ();
+
+try {
+  my $parser = Option::Parser->new();
+  $parser->accepts('ftp');
+  $parser->accepts('username').requiredIf('ftp').withRequiredArg();
+  $parser->accepts('password').requiredIf('ftp').withRequiredArg();
+
+  $parser->parse(['--ftp']);
+} catch {
+  printf STDERR "Unexpected exception %s\n", $_;
+}
+

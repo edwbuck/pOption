@@ -1,0 +1,11 @@
+#!/usr/bin/env perl
+package Examples::ExceptionExample;
+
+use Option::Parser ();
+
+try {
+   my $parser = Option::Parser->new();
+   $parser->parse('-x');
+} catch {
+   warn "Error parsing command line arguments: $_";
+}

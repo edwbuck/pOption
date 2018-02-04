@@ -1,0 +1,17 @@
+#!/usr/bin/env perl
+package Examples::HelpExample;
+
+use Option::Parser ();
+
+my $parser = Option::Parser->new();
+$parser->accepts("c")->withRequiredArg()->ofType(Int)->describedAd("count")->defaultsTo(1);
+$parser->accepts("q")->withOptionalArg()->ofType(Double)->describedAd("quantity");
+$parser->accepts(["d", "some data"])->withRequiredArg()->required()->withValuesConvertedBy( Options::DateConverter->new() );
+$parser->acceptsAll(["v", "talkative", "chatty"], "be more verbose");
+$parser->accepts("output-file")->withOptionalArg().ofType('IO::File').describedAs('file');
+$parser->acceptsAdd(['h', '?'], 'show help').forHelp();
+$parser->acceptsAdd(['cp', 'classpath']).withRequiredArg()->describedAs(sprintf('path1%spath2:...', File::Util::SL))->ofType('IO::File')->withValuesSeparatedBy(File::Util::SL);
+$parser->nonOptions("files to chew on")->ofType('IO::File')->describedAs('input files');
+
+$parser->printHelp(*STDOUT);
+

@@ -1,0 +1,59 @@
+#!/usr/bin/env perl
+
+# --- Example HelpFormatter --- 
+package Example::MyFormatter; 
+
+use strict;
+use warnings;
+
+use Moo;
+
+with('Option::HelpFormatter');
+
+sub format {
+  my ($self, %options) = @_;
+
+  my $buffer = "";
+  for my $descriptor ( values %options ) {
+    $buffer .= _line_for($descriptor);
+  }
+  return $buffer;
+}
+
+sub _line_for {
+  my ($descriptor) = @_;
+
+  if ($descriptor->representsNonOptions()) {
+    return printf("%s(%s):%s\n", $descriptor->argumentDescription(), $descriptor->argumentTypeIndicator(), $descriptor->description());
+  }
+  return printf("[%s]: description = %s, required = %s, accepts arguments = %s, requires argument = %s, argument description = %s, argument type indicator = %s, default values = %s\n", 
+    join(', ', $descriptor->options()), 
+    $descriptor->description(),
+    $descriptor->isRequired(),
+    $descriptor->acceptsArguments(),
+    $descriptor->requiresArgument(),
+    $descriptor->argumentDescription(),
+    $descriptor->argumentTypeIndicator(),
+    $descriptor->defaultValues());
+}
+
+no Moo;
+
+# --- Example program --- 
+
+package Examples::HelpFormatterExample;
+use Option::Parser ();
+
+my $parser = Option::Parser->new();
+$parser->accepts("c")->withRequiredArg()->ofType(Int)->describedAd("count")->defaultsTo(1);
+$parser->accepts("q")->withOptionalArg()->ofType(Double)->describedAd("quantity");
+$parser->accepts(["d", "some data"])->withRequiredArg()->required()->withValuesConvertedBy( Options::DateConverter->new() );
+$parser->acceptsAll(["v", "talkative", "chatty"], "be more verbose");
+$parser->accepts("output-file")->withOptionalArg().ofType('IO::File').describedAs('file');
+$parser->acceptsAdd(['h', '?'], 'show help').forHelp();
+$parser->acceptsAdd(['cp', 'classpath']).withRequiredArg()->describedAs(sprintf('path1%spath2:...', File::Util::SL))->ofType('IO::File')->withValuesSeparatedBy(File::Util::SL);
+$parser->nonOptions("files to chew on")->ofType('IO::File')->describedAs('input files');
+
+$parser->formatHelpWith(Example::MyFormatter->new());
+$parser->printHelp(*STDOUT);
+
