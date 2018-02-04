@@ -1,0 +1,18 @@
+#!/usr/bin/env perl
+package Examples::RequiredUnlessExample;
+
+use Try::Tiny;
+
+use Option::Parser ();
+
+try {
+  my $parser = Option::Parser->new();
+  $parser->accepts('anonymous');
+  $parser->accepts('username').requiredIf('anonymous').withRequiredArg();
+  $parser->accepts('password').requiredIf('anonymous').withRequiredArg();
+
+  $parser->parse(['--anonymous']);
+} catch {
+  printf STDERR "Unexpected exception %s\n", $_;
+}
+

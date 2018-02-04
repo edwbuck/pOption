@@ -12,6 +12,7 @@ install:
 	cp examples/HelpFormatterExample ${prefix}/share/doc/perl-Option/samples 
 	cp examples/HelpExample ${prefix}/share/doc/perl-Option/samples 
 	cp examples/RequiredIfExample ${prefix}/share/doc/perl-Option/samples 
+	cp examples/RequiredUnlessExample ${prefix}/share/doc/perl-Option/samples 
 	mkdir -p ${prefix}/share/perl5/vendor_perl/Option
 	cp src/Option/Parser.pm ${prefix}/share/perl5/vendor_perl/Option
 
